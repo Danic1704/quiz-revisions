@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QCM EPP - HTML/CSS/PHP & Gestion</title>
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: linear-gradient(to right, #4e54c8, #8f94fb);
+        color: #333;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+      }
+      .quiz-container {
+        background: #fff;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        width: 90%;
+        max-width: 700px;
+      }
+      .question {
+        font-size: 1.2em;
+        margin-bottom: 20px;
+      }
+      .options label {
+        display: block;
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+      .options label.correct {
+        background: #4caf50;
+        color: white;
+        border-color: #388e3c;
+      }
+      .options label.wrong {
+        background: #e53935;
+        color: white;
+        border-color: #b71c1c;
+      }
+      .btn {
+        margin-top: 20px;
+        padding: 10px 20px;
+        font-size: 1em;
+        border: none;
+        border-radius: 10px;
+        background-color: #4e54c8;
+        color: white;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+      .btn:hover {
+        background-color: #3b3fc4;
+      }
+      #timer {
+        font-size: 1.2em;
+        margin-bottom: 20px;
+        color: #fff;
+        font-weight: bold;
+      }
+      #score {
+        font-size: 1.2em;
+        color: #333;
+        text-align: center;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="timer">⏳ Temps restant : 45:00</div>
+    <div class="quiz-container">
+      <div id="quiz"></div>
+      <button class="btn" id="nextBtn" onclick="nextQuestion()">Suivant</button>
+      <div id="score"></div>
+    </div>
+
+    <script>
+      const questions = [
+        {
+          q: "Quelle balise HTML est utilisée pour insérer une image ?",
+          options: [
+            "&lt;img&gt;",
+            "&lt;image&gt;",
+            "&lt;pic&gt;",
+            "&lt;src&gt;",
+          ],
+          answer: 0,
+        },
+        {
+          q: "Quel attribut est utilisé pour rediriger un formulaire en PHP ?",
+          options: ["action", "method", "href", "redirect"],
+          answer: 0,
+        },
+        {
+          q: "En CSS, que fait la propriété 'display: flex' ?",
+          options: [
+            "Cache l'élément",
+            "Active le mode grille",
+            "Transforme en conteneur flexible",
+            "Augmente la taille du texte",
+          ],
+          answer: 2,
+        },
+        {
+          q: "Quel symbole est utilisé pour accéder à une variable en PHP ?",
+          options: ["#", "%", "$", "&"],
+          answer: 2,
+        },
+        {
+          q: "Quelle balise HTML est utilisée pour créer un lien ?",
+          options: ["&lt;a&gt;", "&lt;link&gt;", "&lt;href&gt;", "&lt;nav&gt;"],
+          answer: 0,
+        },
+
+        {
+          q: "Quel attribut HTML permet d'ouvrir un lien dans un nouvel onglet ?",
+          options: [
+            "target='_new'",
+            "href='_blank'",
+            "target='_blank'",
+            "link='_blank'",
+          ],
+          answer: 2,
+        },
+        {
+          q: "Quelle balise est utilisée pour insérer une ligne horizontale ?",
+          options: ["&lt;line&gt;", "&lt;hr&gt;", "&lt;br&gt;", "&lt;rule&gt;"],
+          answer: 1,
+        },
+        {
+          q: "En HTML5, quelle balise est utilisée pour inclure du son ?",
+          options: [
+            "&lt;media&gt;",
+            "&lt;sound&gt;",
+            "&lt;audio&gt;",
+            "&lt;voice&gt;",
+          ],
+          answer: 2,
+        },
+        {
+          q: "Quel attribut HTML est utilisé pour rendre un champ de formulaire obligatoire ?",
+          options: ["required", "validate", "must", "obligatory"],
+          answer: 0,
+        },
+        {
+          q: "Quel est le rôle de la balise &lt;label&gt; en HTML ?",
+          options: [
+            "Afficher un bouton",
+            "Afficher une légende",
+            "Associer un texte à un champ",
+            "Créer un champ de texte",
+          ],
+          answer: 2,
+        },
+
+        {
+          q: "Quelle propriété CSS permet de changer la police d’un texte ?",
+          options: ["font-family", "font-style", "text-style", "text-font"],
+          answer: 0,
+        },
+        {
+          q: "Quelle unité CSS est relative à la taille du parent ?",
+          options: ["em", "px", "vh", "%"],
+          answer: 0,
+        },
+        {
+          q: "Quelle propriété CSS centre horizontalement un bloc (div) ?",
+          options: [
+            "text-align: center",
+            "margin: auto",
+            "padding: auto",
+            "display: center",
+          ],
+          answer: 1,
+        },
+        {
+          q: "Comment rendre un élément invisible sans le supprimer du flux ?",
+          options: [
+            "display: none",
+            "visibility: hidden",
+            "opacity: 0",
+            "position: absolute",
+          ],
+          answer: 1,
+        },
+        {
+          q: "Quelle pseudo-classe CSS est utilisée quand on survole un élément ?",
+          options: [":hover", ":active", ":focus", ":visited"],
+          answer: 0,
+        },
+
+        {
+          q: "Quel mot-clé est utilisé pour définir une fonction en PHP ?",
+          options: ["def", "function", "fun", "define"],
+          answer: 1,
+        },
+        {
+          q: "Quelle est la bonne syntaxe pour écrire un commentaire en PHP ?",
+          options: [
+            "# Commentaire",
+            "// Commentaire",
+            "/* Commentaire */",
+            "Toutes ces réponses",
+          ],
+          answer: 3,
+        },
+        {
+          q: "Quelle superglobale PHP contient les données envoyées par une méthode GET ?",
+          options: ["$_POST", "$GET", "$_GET", "$_REQUEST"],
+          answer: 2,
+        },
+        {
+          q: "Quelle fonction permet de compter le nombre d’éléments dans un tableau PHP ?",
+          options: ["sum()", "count()", "total()", "sizeof()"],
+          answer: 1,
+        },
+        {
+          q: "Quel symbole est utilisé pour concaténer deux chaînes en PHP ?",
+          options: [".", "+", "&", ","],
+          answer: 0,
+        },
+
+        {
+          q: "En PHP, que fait la fonction isset() ?",
+          options: [
+            "Teste si une variable existe",
+            "Supprime une variable",
+            "Crée une variable",
+            "Affiche une variable",
+          ],
+          answer: 0,
+        },
+        {
+          q: "Que retourne la fonction strlen() en PHP ?",
+          options: [
+            "Le nombre de mots",
+            "La longueur d'une chaîne",
+            "Le type de variable",
+            "L'inverse de la chaîne",
+          ],
+          answer: 1,
+        },
+        {
+          q: "Quel est le rôle de include() en PHP ?",
+          options: [
+            "Inclure un fichier externe",
+            "Créer une boucle",
+            "Déclarer une variable",
+            "Déclencher une fonction",
+          ],
+          answer: 0,
+        },
+        {
+          q: "Comment déclarer une variable en PHP ?",
+          options: ["var x;", "$x = 5;", "let x = 5;", "declare x;"],
+          answer: 1,
+        },
+        {
+          q: "Que signifie PHP ?",
+          options: [
+            "Personal Hypertext Processor",
+            "Pre Hypertext Processing",
+            "PHP: Hypertext Preprocessor",
+            "Page Hyper Protocol",
+          ],
+          answer: 2,
+        },
+
+        {
+          q: "Quel est le rôle principal d'un diagramme de séquence en UML ?",
+          options: [
+            "Modéliser la structure statique",
+            "Décrire les interactions dynamiques",
+            "Représenter le flux de données",
+            "Illustrer la hiérarchie",
+          ],
+          answer: 1,
+        },
+        {
+          q: "Dans le modèle CMMI, lequel des niveaux suivants n'existe pas ?",
+          options: [
+            "Initial",
+            "Défini",
+            "Reproductible",
+            "Géré quantitativement",
+          ],
+          answer: 2,
+        },
+        {
+          q: "Quelle méthode agile privilégie le développement itératif et la collaboration ?",
+          options: ["Waterfall", "Scrum", "RAD", "V-Model"],
+          answer: 1,
+        },
+        {
+          q: "En gestion de projet, que signifie l'acronyme MOA ?",
+          options: [
+            "Maîtrise d'Œuvre",
+            "Maîtrise d'Ouvrage",
+            "Organisation Agile",
+            "Opérationnel d'Architecture",
+          ],
+          answer: 1,
+        },
+        {
+          q: "Quelle est la principale fonction d'un pare-feu ?",
+          options: [
+            "Accélérer la connexion",
+            "Filtrer le trafic réseau",
+            "Gérer les IP",
+            "Sauvegarder les données",
+          ],
+          answer: 1,
+        },
+        {
+          q: "Différence principale entre intranet et extranet ?",
+          options: [
+            "Intranet public",
+            "Intranet interne, extranet pour partenaires",
+            "Intranet avec Internet",
+            "Pas de différence",
+          ],
+          answer: 1,
+        },
+        {
+          q: "ACID signifie ?",
+          options: [
+            "Automatisation des Calculs d'Information Distribuée",
+            "Atomicité, Cohérence, Isolation, Durabilité",
+            "Analyse des Circuits Informatiques Dynamiques",
+            "Association des Concepts Informatiques Dédiés",
+          ],
+          answer: 1,
+        },
+        {
+          q: "Objectif principal de MERISE ?",
+          options: [
+            "Développer des applications temps réel",
+            "Modéliser les systèmes d'information",
+            "Gérer le réseau informatique",
+            "Optimiser les bases de données",
+          ],
+          answer: 1,
+        },
+        {
+          q: "Fonction principale d'un proxy ?",
+          options: [
+            "Traduction IP",
+            "Intermédiaire entre client et serveur",
+            "Crypter les données",
+            "Attribution d'IP",
+          ],
+          answer: 1,
+        },
+        {
+          q: "SSO signifie ?",
+          options: [
+            "Secure System Override",
+            "Single Sign-On",
+            "System Security Operations",
+            "Standard Security Organization",
+          ],
+          answer: 1,
+        },
+      ];
+
+      let current = 0;
+      let score = 0;
+      let time = 30 * 60;
+      let timerActive = true;
+      let timerId;
+
+      function updateTimer() {
+        if (!timerActive) return;
+        const minutes = String(Math.floor(time / 60)).padStart(2, "0");
+        const seconds = String(time % 60).padStart(2, "0");
+        document.getElementById(
+          "timer"
+        ).textContent = `⏳ Temps restant : ${minutes}:${seconds}`;
+        if (time > 0) {
+          time--;
+          timerId = setTimeout(updateTimer, 1000);
+        } else {
+          showScore();
+        }
+      }
+
+      function loadQuestion() {
+        if (current >= questions.length) return showScore();
+        const q = questions[current];
+        let html = `<div class='question'>${q.q}</div><div class='options'>`;
+        q.options.forEach((opt, i) => {
+          html += `<label><input type='radio' name='option' value='${i}' onchange='checkAnswer(${i})'> ${opt}</label>`;
+        });
+        html += `</div>`;
+        document.getElementById("quiz").innerHTML = html;
+      }
+
+      function checkAnswer(selectedIndex) {
+        const labels = document.querySelectorAll(".options label");
+        const correctIndex = questions[current].answer;
+
+        labels.forEach((label, i) => {
+          if (i === correctIndex) {
+            label.classList.add("correct");
+          }
+          if (i === selectedIndex && i !== correctIndex) {
+            label.classList.add("wrong");
+          }
+        });
+
+        if (selectedIndex === correctIndex) score++;
+
+        // Désactiver tous les boutons après sélection
+        document.querySelectorAll("input[name='option']").forEach((input) => {
+          input.disabled = true;
+        });
+      }
+
+      function nextQuestion() {
+        const selected = document.querySelector("input[name='option']:checked");
+
+        if (!selected) {
+          alert(
+            "⚠️ Veuillez sélectionner une réponse avant de passer au suivant."
+          );
+          return;
+        }
+
+        // Si la réponse a déjà été vérifiée, on continue
+        current++;
+        if (current < questions.length) {
+          loadQuestion();
+        } else {
+          showScore();
+        }
+      }
+
+      function showScore() {
+        timerActive = false;
+        clearTimeout(timerId); // 👉 Stoppe le décompte
+        document.querySelector(".btn").style.display = "none";
+        document.getElementById("quiz").style.display = "none";
+        document.getElementById(
+          "score"
+        ).innerHTML = `✅ Ton score final : ${score} / ${questions.length}`;
+      }
+
+      loadQuestion();
+      updateTimer();
+    </script>
+  </body>
+</html>
